@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SBAC Compiler</title>
+  <meta name="description" content="SBAC Compiler — เขียนและรัน SQL ออนไลน์ พร้อมแม่แบบ บทเรียน หน้าตาราง และแบบฝึกหัด">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233f4fe0'/%3E%3Cpath d='M12 10l-6 6 6 6M20 10l6 6-6 6' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+  <link rel="stylesheet" href="css/app.css?v=2">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('sbac:theme');
+        if (t === '"light"' || t === '"dark"') document.documentElement.setAttribute('data-theme', JSON.parse(t));
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/editor" aria-label="SBAC Compiler หน้าแรก">
+      <span class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M12 10l-6 6 6 6M20 10l6 6-6 6" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">SBAC<span>Compiler</span></span>
+    </a>
+
+    <nav class="mainnav" aria-label="เมนูหลัก">
+      <a href="#/editor" data-page="editor">คอมไพเลอร์</a>
+      <a href="#/templates" data-page="templates">แม่แบบ</a>
+      <a href="#/tutorial" data-page="tutorial">บทเรียน</a>
+      <a href="#/tables" data-page="tables">ตาราง</a>
+      <a href="#/exercises" data-page="exercises">แบบฝึกหัด</a>
+    </nav>
+
+    <div class="top-center" id="topCenter"></div>
+
+    <div class="top-right">
+      <button class="icon-btn" id="themeBtn" title="สลับธีมสว่าง/มืด" aria-label="สลับธีม"></button>
+      <div id="topRight" class="top-right-slot"></div>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="page" id="page-editor" hidden></section>
+    <section class="page page-scroll" id="page-templates" hidden></section>
+    <section class="page" id="page-tutorial" hidden></section>
+    <section class="page" id="page-tables" hidden></section>
+    <section class="page" id="page-exercises" hidden></section>
+  </main>
+
+  <div id="boot" class="boot">
+    <div class="boot-card">
+      <div class="spinner"></div>
+      <div>กำลังเตรียมฐานข้อมูล SQL ในเบราว์เซอร์…</div>
+    </div>
+  </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <!-- Libraries (cdnjs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/sql-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
+
+  <!-- App -->
+  <script src="js/util.js?v=2"></script>
+  <script src="js/store.js?v=2"></script>
+  <script src="js/dialects.js?v=2"></script>
+  <script src="js/engine.js?v=2"></script>
+  <script src="js/data/datasets.js?v=2"></script>
+  <script src="js/data/templates.js?v=2"></script>
+  <script src="js/data/lessons.js?v=2"></script>
+  <script src="js/data/exercises.js?v=2"></script>
+  <script src="js/workspace.js?v=2"></script>
+  <script src="js/pages/editor.js?v=2"></script>
+  <script src="js/pages/templates.js?v=2"></script>
+  <script src="js/pages/tutorial.js?v=2"></script>
+  <script src="js/pages/tables.js?v=2"></script>
+  <script src="js/pages/exercises.js?v=2"></script>
+  <script src="js/app.js?v=2"></script>
+</body>
+</html>
